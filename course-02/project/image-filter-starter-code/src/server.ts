@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import {filterImageFromURL, deleteLocalFiles} from './util/util';
+import {filterImageFromURL, deleteLocalFiles, isBlank} from './util/util';
 
 (async () => {
 
@@ -30,7 +30,26 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
   /**************************************************************************** */
 
   app.get( "/filteredimage", async ( req, res ) => {
-    res.send("try GET /filteredimage?image_url={{}}")
+    const { image_url } = req.query;
+
+    if (isBlank(image_url)) {
+      return res.status(400).send("image_url is required");
+    }
+
+    return filterImageFromURL(image_url)
+      .then( (filePath) => {
+
+        if (isBlank(filePath)) {
+          return res.status(404).send("file path not found");
+        }
+
+        return res.status(200).sendFile(filePath, () => deleteLocalFiles( [filePath] ));
+
+      })
+      .catch( (e) => {
+        console.log("Something woring: ", e); 
+        return res.status(500).send("Something woring :(");
+      } );
   } );
 
   //! END @TODO1
