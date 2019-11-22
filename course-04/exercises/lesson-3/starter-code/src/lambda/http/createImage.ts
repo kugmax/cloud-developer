@@ -31,7 +31,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   const newItem = {
     groupId: groupId,
     imageId: imageId,
-    timestamp: Date.now(),
+    timestamp: Date.now().toString(),
     ...parsedBody
   }
 
