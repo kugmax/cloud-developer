@@ -21,13 +21,13 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
 
   const newItem = {
     id: itemId,
+    userId: userId,
     ...parsedBody
   }
 
   await docClient.put({
     TableName: groupsTable,
-    Item: newItem,
-    userId: userId,
+    Item: newItem
   }).promise()
 
   return {
